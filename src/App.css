@@ -14,9 +14,9 @@ Button {
 }
 
 .error {
-  font-size: 20px;
   color: red;
   font-style: italic;
+  margin-bottom: -5px;
 }
 
 .search {

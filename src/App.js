@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from "react";
 import './App.css';
 
-function Button({date, url, setDisplayData, setHeader}) {
+function Button({date, url, setDisplayData, setHeader, setSearchDisplayData}) {
   async function handleClick(url) {
     try {
       const response = await fetch(url);
       const json = await response.json();
+      setSearchDisplayData('');
       setDisplayData(json);
       setHeader(date);
       console.log(json);
@@ -62,6 +63,7 @@ function App() {
 
     try {
       setError('');
+      setDisplayData('');
       let search_url = `https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=${searchDate}&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6`
       const response = await fetch(search_url);
       const json = await response.json();
@@ -91,6 +93,7 @@ function App() {
       <h1>Look! BOOKS</h1>
 
       <form onSubmit={loadSearchDisplayData}>
+        <p className='error'>{error}</p>
         <input className='search' type="text" placeholder="Search by date (YYYY-MM-DD)" value={searchDate} onChange={handleSearchDate} />
         <button className='submit' type='submit'>
           Go!
@@ -100,14 +103,13 @@ function App() {
       <p>Need a starting point? </p>
       <p>Look through these most recent New York Time's Best Sellers by week:</p>
       <div>
-        <Button date='Latest' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
-        <Button date='Feb 11' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-26&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
-        <Button date='Feb 4' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-19&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
-        <Button date='Jan 28' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-12&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
+        <Button date='Latest' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader} setSearchDisplayData={setSearchDisplayData}/>
+        <Button date='Feb 11' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-26&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader} setSearchDisplayData={setSearchDisplayData}/>
+        <Button date='Feb 4' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-19&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader} setSearchDisplayData={setSearchDisplayData}/>
+        <Button date='Jan 28' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-12&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader} setSearchDisplayData={setSearchDisplayData}/>
       </div>
 
       <h1 className='header'>{header}</h1>
-      <p className='error'>{error}</p>
       
       {searchDisplayData && !error ? (searchDisplayData.results.lists.map((list, listIndex) => {
         return (
