@@ -1,18 +1,15 @@
 import React, {useState} from "react";
-import Search from "./search.svg";
 import './App.css';
 
 function Button({year, url, setDisplayData}) {
   async function handleClick(url) {
     try {
-      const response = await fetch(url)
+      const response = await fetch(url);
       const json = await response.json();
       setDisplayData(json);
-      console.log(json);
 
     } catch (e) {
       console.log("There was an error: " + e);
-      // TO DO: Create an error pop-up in case something doesn't go to plan
     }
   }
   
@@ -37,15 +34,13 @@ function App() {
   }
 
   async function loadSearchDisplayData() {
-    console.log("I got into loadSearch");
-
     try {
-      // const search_url = `https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=${searchDate}&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6`;
-      let search_url = 'https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6';
+      let search_url = "https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6"
       const response = await fetch(search_url);
       const json = await response.json();
       setSearchDisplayData(json);
       console.log("Search Display Data: " + json);
+
     } catch (e) {
       console.log("Error: " + e);
     }
@@ -61,7 +56,7 @@ function App() {
 
       <form>
         <input className='search' type="text" placeholder="Search by date (YYYY-MM-DD)" onChange={handleSearchDate} />
-        <button className='submit' type="submit" onClick={loadSearchDisplayData}>
+        <button className='submit' onClick={loadSearchDisplayData}>
           Go!
         </button>
       </form>
