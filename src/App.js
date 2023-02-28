@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import './App.css';
 
 function Button({date, url, setDisplayData, setHeader}) {
@@ -31,10 +31,28 @@ function App() {
   const [searchDisplayData, setSearchDisplayData] = useState('');
   const [hide, setHide] = useState(new Array(18).fill(false));
   const [header, setHeader] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    loadDefaultPage();
+  }, []);
+
+  async function loadDefaultPage() {
+    try {
+      const url = 'https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6';
+      const response = await fetch(url);
+      const json = await response.json();
+      setHeader('Latest');
+      setDisplayData(json);
+
+    } catch (e) {
+      console.log("Error: " + e);
+    }
+  }
 
   function handleCollapsible(index) {
     setHide((pHide) => pHide.map((o, i) => {
-      if (i == index) return !o;
+      if (i === index) return !o;
       return o;
     }));
   }
@@ -43,15 +61,24 @@ function App() {
     e.preventDefault();
 
     try {
+      setError('');
       let search_url = `https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=${searchDate}&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6`
       const response = await fetch(search_url);
       const json = await response.json();
-      setSearchDisplayData(json);
-      setHeader(searchDate);
-      console.log(json);
+
+      if (json.status == "OK") {
+        setSearchDisplayData(json);
+        setHeader(searchDate);
+        console.log(json);
+      } else {
+        setHeader('');
+        setError("Please submit a valid date!")
+      }
 
     } catch (e) {
       console.log("Error: " + e);
+      setHeader('');
+      setError("Please submit a valid date!")
     }
   }
 
@@ -74,14 +101,15 @@ function App() {
       <p>Look through these most recent New York Time's Best Sellers by week:</p>
       <div>
         <Button date='Latest' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
-        <Button date='Feb 18' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-27&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
         <Button date='Feb 11' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-26&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
         <Button date='Feb 4' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-19&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
+        <Button date='Jan 28' url='https://api.nytimes.com/svc/books/v3/lists/overview.json?published_date=2023-02-12&api-key=z3irrlRzdl2CBdcwjRSK7dA96whVEOS6' setDisplayData={setDisplayData} setHeader={setHeader}/>
       </div>
 
       <h1 className='header'>{header}</h1>
+      <p className='error'>{error}</p>
       
-      {searchDisplayData ? (searchDisplayData.results.lists.map((list, listIndex) => {
+      {searchDisplayData && !error ? (searchDisplayData.results.lists.map((list, listIndex) => {
         return (
           <div>
             <button className='list-name' onClick={() => handleCollapsible(listIndex)} key={listIndex}>{list.list_name}</button>

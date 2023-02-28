@@ -13,6 +13,12 @@ Button {
   margin-left: 10%;
 }
 
+.error {
+  font-size: 20px;
+  color: red;
+  font-style: italic;
+}
+
 .search {
   width: 300px;
 }
